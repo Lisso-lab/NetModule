@@ -69,8 +69,8 @@ used to calculate `Static velocity`, `Dynamic velocity` and `RotVelocity` (mostl
 ### Parameters
 
 * `hum` - `: Humanoid?` Humanoid used for `Dynamic velocity`(optional).
-* `rotvel` - `: Vector3?` Passed for amplifying `RotVelocity` (for `module.stabilize`, optional)
-* `options` - `: table` options for customizing various variables (options shown in example)
+* `rotvel` - `: Vector3?` Passed for amplifying `RotVelocity` (for `module.stabilize`, optional).
+* `options` - `: table` options for customizing various variables (options shown in example).
 
 ### Example
 ```lua
@@ -103,8 +103,8 @@ returns Heartbeat connection with velocity being applied inside.
 ### Parameters
 
 * `part` - `: BasePart` part to whom `Velocity` is applied.
-* `hum` - `: Humanoid` used for doing Dynamic velocity(optional)
-* `options` - `: table` options for customizing various variables (options shown in example)
+* `hum` - `: Humanoid` used for doing Dynamic velocity(optional).
+* `options` - `: table` options for customizing various variables (options shown in example).
 
 ### Example
 ```lua
@@ -123,5 +123,47 @@ local radless_connection = module.radless(
 		st_vel = Vector3.new(30,0,0)
 	} --one option can be set, or all
 )
+--returns Heartbeat connection.
 ```
 ---
+## module.stabilize
+```lua
+function module.stabilize(part: BasePart, part_to: BasePart, hum: Humanoid?, options: table?): RunService
+```
+Stabilizes one part to another, with(optionaly) velocity being applied,
+Uses `CFrame`'s to stabilize parts. Also has offset option `: CFrame`.
+
+### Parameters
+
+* `part` - `: BasePart` part, which is stabilized to `part_to`.
+* `part_to` - `: BasePart` part, to whom is stabilized `part`.
+* `hum` - `: Humanoid` used for calculating dynamic velocity(optional).
+* `options` - `: table` options for customizing various variables (options shown in example).
+
+### Example
+```lua
+local options = {
+	cf_offset = CFrame.new(0,0,0), --For offseting...
+	st_vel = Vector3.new(0,50,0), --Stational Velocity
+	dv_debounce = .05, --Dynamic Velocity debounce
+	dv_amplifier = 50, --Dynamic Velocity apmplifier
+	rv_amplifier = 5,  --Rotational Velocity apmplifier
+	dynamic_vel = hum and true or false, --If dynamic velocity is enabled
+	calc_rotvel = true, --If rotvel calculation is enabled(otherwise 0,0,0)
+	apply_vel = true --Apply velocity to stabilized part
+}
+--Default options in function.
+
+local stabilize_connection = module.stabilize(
+	part, 
+	part1,
+	hum, 
+	{
+		cf_offset = CFrame.new(1,0,0),
+		st_vel = Vector3.new(0,0,30)
+	}
+)
+--Returns renderstepped and heartbeat connection.
+```
+---
+
