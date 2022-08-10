@@ -17,7 +17,7 @@ net_module.do_options = function(tabl: table?, options: table): table
 	return tabl
 end
 
-net_module.sim_rad = function(plr: Player): RunService
+net_module.sim_rad = function(plr: Player): RBXScriptConnection
 	pcall(function() setscriptable(plr, "SimulationRadius", true) end)
 	
 	return run_service["Heartbeat"]:Connect(function()
@@ -111,7 +111,7 @@ net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid
 		}
 	)
 
-	local rs_con, hb_con: RunService do
+	local rs_con, hb_con: RBXScriptConnection do
 		local cf_offset: CFrame = options.cf_offset
 		
 		
@@ -232,6 +232,39 @@ net_module.set_hum_state = function(hum: Humanoid, hum_state_type: Enum)
 	hum:SetStateEnabled(hum_state_type, true)
 
 	hum:ChangeState(hum_state_type)
+end
+
+net_module.disable_collisions_model = function(model: Model, options: table): RBXScriptConnection
+    options = net_module.do_options(options,
+        {
+            noclip_hats = true, --Tries getting handle of accessories.
+            do_getdescendants = false --Does get descendants.
+        }
+    )
+
+    local st_loop: RBXScriptConnection do
+        if options.do_getdescendants then
+            st_loop = run_service["Stepped"]:Connect(function()
+                for _,v in pairs(model:GetDescendants()) do
+                    if v:IsA("BasePart") then v.CanCollide = false end
+                end
+            end)
+        else
+            st_loop = run_service["Stepped"]:Connect(function()
+                for _,v in pairs(model:GetChildren()) do
+                    if v:IsA("Accessory") and options.noclip_hats then
+                        local handle = v:FindFirstChildWhichIsA("BasePart")
+
+                        if handle then handle.CanCollide = false end
+                    elseif v:IsA("BasePart") then
+                        v.CanCollide = false
+                    end
+                end
+            end)
+        end
+    end
+
+    return st_loop
 end
 
 return net_module
