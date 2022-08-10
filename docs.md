@@ -16,7 +16,7 @@ Connects Heartbeat loop which sets SimulationRadius and MaximumSimulationRadius 
 
 ### Parameters
 
-*`player` - `: Player` on whom connection is used.
+* `player` - `: Player` on whom connection is used.
 
 ### Example
 ```lua
@@ -31,8 +31,8 @@ used to amplify `MoveDirection` Of humanoid.
 
 ### Parameters
 
-*`move_dir` - `: Vector3` MoveDirection from `Humanoid`
-*`amplifier` - `: number` by whom `move_dir` is amplified(configurable, will be seen further down)
+* `move_dir` - `: Vector3` MoveDirection from `Humanoid`
+* `amplifier` - `: number` by whom `move_dir` is amplified(configurable, will be seen further down)
 
 ### Example
 ```lua
