@@ -68,8 +68,8 @@ used to calculate `Static velocity`, `Dynamic velocity` and `RotVelocity` (mostl
 
 ### Parameters
 
-* `hum` - `: Humanoid?` Humanoid used for `Dynamic velocity`(optional).
-* `rotvel` - `: Vector3?` Passed for amplifying `RotVelocity` (for `module.stabilize`, optional).
+* `hum` - `: Humanoid` Humanoid used for `Dynamic velocity`(optional).
+* `rotvel` - `: Vector3` Passed for amplifying `RotVelocity` (for `module.stabilize`, optional).
 * `options` - `: table` options for customizing various variables (options shown in example).
 
 ### Example
