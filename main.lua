@@ -4,7 +4,7 @@ local debounce_tick: number = 0
 
 local net_module = {}
 
-net_module.do_options = function(tabl: table, options: table?): table
+net_module.do_options = function(tabl: table?, options: table): table
 	if type(tabl) ~= "table" then
 		tabl = options
 	else
