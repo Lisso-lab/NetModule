@@ -13,7 +13,7 @@ that will be returned.
 ---
 ## module.sim_rad
 ```lua
-function module.sim_rad(player: Player): Runservice
+function module.sim_rad(player: Player): RBXScriptConnection
 ```
 Connects Heartbeat loop which sets SimulationRadius and MaximumSimulationRadius to 1e+10
 
@@ -95,7 +95,7 @@ local calculated_velocity = module.calculate_velocity(
 ---
 ## module.radless
 ```lua
-function module.radless(part: BasePart, hum: Humanoid?, options: table?): Vector3
+function module.radless(part: BasePart, hum: Humanoid?, options: table?): RBXScriptConnection
 ```
 used to simply add velocity to one part. `Dynamic velocity` is optional.
 returns Heartbeat connection with velocity being applied inside.
@@ -128,7 +128,7 @@ local radless_connection = module.radless(
 ---
 ## module.stabilize
 ```lua
-function module.stabilize(part: BasePart, part_to: BasePart, hum: Humanoid?, options: table?): RunService
+function module.stabilize(part: BasePart, part_to: BasePart, hum: Humanoid?, options: table?): : RBXScriptConnection
 ```
 Stabilizes one part to another, with(optionaly) velocity being applied,
 Uses `CFrame`'s to stabilize parts. Also has offset option `: CFrame`.
@@ -242,4 +242,32 @@ module.set_hum_state(
 	nil
 )
 --Default HumanoidStateType is Physics
+```
+---
+## module.disable_collisions_model 
+```lua
+function module.disable_collisions_model (options: table?): RBXScriptConnection
+```
+Disables collision on parts with some additional options.
+Returns Stepped loop.
+
+### Parameters
+
+* `options` - `: table` options for additional fetaturers (optional, options shown in example).
+
+### Example
+```lua
+local options = {
+	noclip_hats = true,
+	do_getdescendants = false
+}
+--Default settings in function
+
+local collision_connection = module.disable_collisions_model(
+    model,
+    {
+        noclip_hats = false
+
+    }
+)
 ```
