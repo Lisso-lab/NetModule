@@ -1,3 +1,4 @@
+--!strict
 local run_service: RunService = game:GetService("RunService")
 
 local debounce_tick: number = 0 
