@@ -118,7 +118,7 @@ local options = {
 
 local radless_connection = module.radless(
 	part,
-	nil,
+	hum,
 	{
 		st_vel = Vector3.new(30,0,0)
 	} --one option can be set, or all
@@ -166,4 +166,81 @@ local stabilize_connection = module.stabilize(
 --Returns renderstepped and heartbeat connection.
 ```
 ---
+## module.part_tweaks
+```lua
+function module.part_tweaks(part: BasePart, options: table?, cpp_options: table?)
+```
+used to tweak properties of parts for better `NetworkOwnership`.
 
+### Parameters
+
+* `part` - `: BasePart` part to whom tweaks are applied.
+* `options` - `: table` options for customizing which properties get disabled (optional, options shown in example).
+* * `cpp_options` - `: table` `CustomPhysicalProperties` options for custom settings(optional, options shown in example).
+
+### Example
+```lua
+local options = {
+	can_touch = false, --Cannot fire .Touched
+	can_query = false, --Cannot be RayCasted
+	root_priority = 127 --Part priority as root
+}
+--Default options in function
+
+local cpp_options = {
+	density = math.huge, --density
+	friction = math.huge, --friction
+	elasticity = 0, --elasticity
+	friction_weight = math.huge, --friction weight
+	elasticity_weight = 0 --elasticity weight
+}
+--Default options in function
+
+module.part_tweaks(
+	part,
+	{
+		CanQuery = true
+	},{
+		elasticity = math.huge
+	}
+)
+```
+---
+## module.physics_tweaks
+```lua
+function module.physics_tweaks(hum: Humanoid?)
+```
+Physics tweaks, which tweak client side physics settings.
+
+### Parameters
+
+* `hum` - `: Humanoid` `hum` is used for one of the physical tweaks(optional).
+
+### Example
+```lua
+module.physics_tweaks(
+	hum
+)
+--No options provided, because I see no reason why.
+```
+---
+## module.set_hum_state
+```lua
+function module.set_hum_physics_state(hum: Humanoid, hum_state_type: Enum.HumanoidStateType?)
+```
+function for changing humanoid state, which disables all other states of humanoid.
+
+### Parameters
+
+* `hum` - `: Humanoid` humanoid whom is used to set `HumanoidStateType`.
+* `hum_state_type` - `: Enum.HumanoidStateType` optional setting for setting specific `HumanoidStateType`.
+
+### Example
+```lua
+module.set_hum_state(
+	hum,
+	nil
+)
+--Default HumanoidStateType is Physics
+```
+---
