@@ -218,7 +218,7 @@ net_module.physics_tweaks = function(hum: Humanoid?)
 	end)
 end
 
-net_module.set_hum_state = function(hum: Humanoid, hum_state_type: Enum)
+net_module.set_hum_state = function(hum: Humanoid, hum_state_type: Enum.HumanoidStateType)
 	hum_state_type = hum_state_type or Enum.HumanoidStateType.Physics
 
 	for _,v in pairs(Enum.HumanoidStateType:GetEnumItems()) do
