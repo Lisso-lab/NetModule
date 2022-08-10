@@ -1,8 +1,11 @@
 # Documentation
 ---
 Note:
-When there is **?** mext to for example: table?
+When there is **?** next to for example: table?
 That means it is optional and it doesn't need to be passed.
+
+`options` which are passed in functions don't need to be passed, or there can be
+passed only one argument. It is written this way.
 
 if there is : Runservice after finishing function, that means that is the type
 that will be returned.
@@ -27,7 +30,7 @@ local sim_rad_connection = module.sim_rad(plr)
 ```lua
 function module.movedir_calc(move_dir: Vector3, amplifier: number): Vector3
 ```
-used to amplify `MoveDirection` Of humanoid.
+used to amplify `MoveDirection` of humanoid.
 
 ### Parameters
 
@@ -36,6 +39,89 @@ used to amplify `MoveDirection` Of humanoid.
 
 ### Example
 ```lua
-local calculated_velocity = module.movedir_calc(move_dir, 50)
+local amplified_velocity = module.movedir_calc(move_dir, 50)
+--move_dir * amplifier
+```
+---
+## module.rotvel_calc
+```lua
+function module.rotvel_calc(rot_vel: Vector3, amplifier: number): Vector3
+```
+used to amplify `AssemblyAngularVelocity` of desired part.
+
+### Parameters
+
+* `rot_vel` - `: Vector3` RotVelocity from desired part
+* `amplifier` - `: number` by whom `rot_vel` is amplified(configurable, will be seen further down)
+
+### Example
+```lua
+local amplified_rotvel = module.rotvel_calc(move_dir, 50)
+--rot_vel * amplifier
+```
+---
+## module.calculate_vel
+```lua
+function module.calculate_vel(hum: Humanoid, rotvel: Vector3, options: table?): Vector3
+```
+used to calculate `Static velocity`, `Dynamic velocity` and `RotVelocity` (mostly optional).
+
+### Parameters
+
+* `hum` - `: Humanoid?` Humanoid used for `Dynamic velocity`(optional).
+* `rotvel` - `: Vector3?` Passed for amplifying `RotVelocity` (for `module.stabilize`, optional)
+* `options` - `: table` options for customizing various variables (options shown in example)
+
+### Example
+```lua
+local options = {
+	st_vel = Vector3.new(0,50,0), --Stational Velocity
+	dv_debounce = .05, --Dynamic Velocity debounce
+	dv_amplifier = 50, --Dynamic Velocity apmplifier
+	rv_amplifier = 5,  --Rotational Velocity apmplifier
+	dynamic_vel = hum and true or false, --If dynamic velocity is enabled
+	calc_rotvel = rotvel and true or false, --If rotvel calculation is enabled(otherwise 0,0,0)
+}
+--default options in functions.
+
+local calculated_velocity = module.calculate_velocity(
+	hum,
+	nil, --RotVelocity, if passed nil, <calc_rotvel> in options will be disabled(seen above)
+	{
+		st_vel = Vector3.new(30,0,0)
+	} --one option can be set, or all of them.
+)
+```
+---
+## module.radless
+```lua
+function module.radless(part: BasePart, hum: Humanoid?, options: table?): Vector3
+```
+used to simply add velocity to one part. `Dynamic velocity` is optional.
+returns Heartbeat connection with velocity being applied inside.
+
+### Parameters
+
+* `part` - `: BasePart` part to whom `Velocity` is applied.
+* `hum` - `: Humanoid` used for doing Dynamic velocity(optional)
+* `options` - `: table` options for customizing various variables (options shown in example)
+
+### Example
+```lua
+local options = {
+	st_vel = Vector3.new(0,50,0), --Static Velocity
+	dv_debounce = .05, --Dynamic Velocity debounce
+	dv_amplifier = 50, --Dynamic Velocity amplifier
+	dynamic_vel = hum and true or false
+}
+--default options in functions.
+
+local radless_connection = module.radless(
+	part,
+	nil,
+	{
+		st_vel = Vector3.new(30,0,0)
+	} --one option can be set, or all
+)
 ```
 ---
