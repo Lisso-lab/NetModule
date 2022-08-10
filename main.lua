@@ -71,7 +71,7 @@ net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, options: t
 	return vel,rotvel
 end
 
-local function radless(part: BasePart, hum: Humanoid?, options: table?): RunService
+local function radless(part: BasePart, hum: Humanoid?, options: table?): RBXScriptConnection
 	options = net_module.do_options(options,
 		{
 			st_vel = Vector3.new(0,50,0), --Static Velocity
@@ -96,7 +96,7 @@ local function radless(part: BasePart, hum: Humanoid?, options: table?): RunServ
 	end)
 end
 
-net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid, options: table?): RunService
+net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid, options: table?): RBXScriptConnection
 	options = net_module.do_options(options,
 		{
 			cf_offset = CFrame.new(0,0,0), --For offseting...
