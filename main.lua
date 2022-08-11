@@ -112,18 +112,13 @@ net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid
 	)
 
 	local rs_con, hb_con: RBXScriptConnection do
-		local cf_offset: CFrame = options.cf_offset
-		
-		
-		pcall(function()
-			rs_con = run_service["Heartbeat"]:Connect(function()
-				part.CFrame = part_to.CFrame * cf_offset
-			end)
+		rs_con = run_service["Heartbeat"]:Connect(function()
+			part.CFrame = part_to.CFrame * options.cf_offset
 		end)
-		
+
 		if options.apply_vel then
 			hb_con = run_service["Heartbeat"]:Connect(function()
-				part.CFrame = part_to.CFrame * cf_offset
+				part.CFrame = part_to.CFrame * options.cf_offset
 
 				local vel, rotvel: Vector3 = net_module.calculate_vel(
 					options.dynamic_vel and hum or nil,
