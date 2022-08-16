@@ -4,7 +4,7 @@ local run_service: RunService = game:GetService("RunService")
 local debounce_tick: number = 0 
 
 local net_module = {
-	Version = "1.2,0"
+	Version = "1.2.0"
 }
 
 net_module.do_options = function(tabl: table?, options: table): table
