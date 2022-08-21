@@ -3,21 +3,29 @@ local run_service: RunService = game:GetService("RunService")
 
 local debounce_tick: number = 0 
 
-local net_module = {
-	Version = "1.2.0"
-}
-
-net_module.do_options = function(tabl: table?, options: table): table
+local function do_options(tabl, options)
 	if type(tabl) ~= "table" then
 		tabl = options
 	else
 		for i,v in pairs(options) do
-			tabl[i] = tabl[i] or options[i]
+			local val do
+				if type(tabl[i]) ~= "nil" then
+					val = tabl[i]
+				else
+					val = options[i]
+				end
+			end
+	
+			tabl[i] = val
 		end
 	end
 
 	return tabl
 end
+
+local net_module = {
+	Version = "1.2.0"
+}
 
 net_module.sim_rad = function(plr: Player): RBXScriptConnection
 	pcall(function() setscriptable(plr, "SimulationRadius", true) end)
@@ -38,7 +46,7 @@ net_module.rotvel_calc = function(rot_vel: Vector3, amplifier: number): Vector3
 end
 
 net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, options: table?): Vector3
-	options = net_module.do_options(options,
+	options = do_options(options,
 		{
 			st_vel = Vector3.new(0,50,0), --Stational Velocity
 			dv_debounce = .05, --Dynamic Velocity debounce
@@ -75,7 +83,7 @@ net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, options: t
 end
 
 local function radless(part: BasePart, hum: Humanoid?, options: table?): RBXScriptConnection
-	options = net_module.do_options(options,
+	options = do_options(options,
 		{
 			st_vel = Vector3.new(0,50,0), --Static Velocity
 			dv_debounce = .05, --Dynamic Velocity debounce
@@ -100,7 +108,7 @@ local function radless(part: BasePart, hum: Humanoid?, options: table?): RBXScri
 end
 
 net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid, options: table?): RBXScriptConnection
-	options = net_module.do_options(options,
+	options = do_options(options,
 		{
 			cf_offset = CFrame.new(0,0,0), --For offseting...
 			st_vel = Vector3.new(0,50,0), --Stational Velocity
@@ -141,7 +149,7 @@ net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid
 end
 
 net_module.part_tweaks = function(part: BasePart, options: table?, cpp_options: table?)
-	options = net_module.do_options(options,
+	options = do_options(options,
 		{
 			can_touch = false, --Cannot fire .Touched
 			can_query = false, --Cannot be RayCasted
@@ -149,7 +157,7 @@ net_module.part_tweaks = function(part: BasePart, options: table?, cpp_options: 
 		}
 	)
 	
-	cpp_options = net_module.do_options(options,
+	cpp_options = do_options(options,
 		{
 			density = math.huge, --density
 			friction = math.huge, --friction
@@ -232,7 +240,7 @@ net_module.set_hum_state = function(hum: Humanoid, hum_state_type: Enum)
 end
 
 net_module.disable_collisions_model = function(model: Model, options: table): RBXScriptConnection
-    options = net_module.do_options(options,
+    options = do_options(options,
         {
             noclip_hats = true, --Tries getting handle of accessories.
             do_getdescendants = false --Does get descendants.
