@@ -62,12 +62,12 @@ net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, options: t
 
 		if not options.dynamic_vel or hum.MoveDirection.Magnitude == 0 then
 			if tick() - debounce_tick < options.dv_debounce then
-				vel = net_module.movedir_calc(hum.MoveDirection, options.dv_amplifier) + (Vector3.new(0,1,0) * options.st_vel) / 6
+				vel = net_module.movedir_calc(hum.MoveDirection, options.dv_amplifier)
 			else
 				vel = options.st_vel
 			end
 		else
-			vel = net_module.movedir_calc(hum.MoveDirection, options.dv_amplifier) + Vector3.new(0,5,0)
+			vel = net_module.movedir_calc(hum.MoveDirection, options.dv_amplifier)
 
 			debounce_tick = tick()
 		end
