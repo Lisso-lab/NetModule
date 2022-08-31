@@ -53,7 +53,7 @@ net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, model: Mod
 			dv_multiplier = 50, --Dynamic Velocity apmplifier
 			rv_multiplier = 5,  --Rotational Velocity apmplifier
 			dynamic_vel = false, --If dynamic velocity is enabled
-            jump_vel = model and true or false, --Jumping velocity
+            jum_vel = model and true or false, --Jumping velocity
 			calc_rotvel = rotvel and true or false --If rotvel calculation is enabled(otherwise 0,0,0)
 		}
 	)
@@ -65,11 +65,11 @@ net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, model: Mod
 			if tick() - debounce_tick < options.dv_debounce then
 				vel = net_module.movedir_calc(hum.MoveDirection, options.dv_multiplier) + options.st_vel / 2
 			else
-				vel = options.st_vel + (options.jump_vel and Vector3.new(0, model.PrimaryPart.AssemblyLinearVelocity.Y, 0) or Vector3.zero)
+				vel = options.st_vel + (options.jum_vel and Vector3.new(0, model.PrimaryPart.AssemblyLinearVelocity.Y, 0) or Vector3.zero)
 			end
 		else
 			vel = net_module.movedir_calc(hum.MoveDirection, options.dv_multiplier)
-            vel += (options.jump_vel and model.PrimaryPart.AssemblyLinearVelocity.Y or Vector3.zero)
+            vel += (options.jum_vel and Vector3.new(0, model.PrimaryPart.AssemblyLinearVelocity.Y, 0) or Vector3.zero)
 
 			debounce_tick = tick()
 		end
