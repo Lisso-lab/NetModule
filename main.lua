@@ -65,7 +65,7 @@ net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, model: Mod
 			if tick() - debounce_tick < options.dv_debounce then
 				vel = net_module.movedir_calc(hum.MoveDirection, options.dv_multiplier) + options.st_vel / 2
 			else
-				vel = options.st_vel + (options.jump_vel and model.PrimaryPart.AssemblyLinearVelocity.Y or Vector3.zero)
+				vel = options.st_vel + (options.jump_vel and Vector3.new(0, model.PrimaryPart.AssemblyLinearVelocity.Y, 0) or Vector3.zero)
 			end
 		else
 			vel = net_module.movedir_calc(hum.MoveDirection, options.dv_multiplier)
