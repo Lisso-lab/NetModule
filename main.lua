@@ -129,22 +129,18 @@ net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid
 
 	local rs_con,hb_con: RBXScriptConnection do
 		rs_con = run_service["Heartbeat"]:Connect(function()
-			if options.stabilize_method == "position" then
-				part.Position = part_to.Position * (options.cf_offset.Position.Magnitude ~= 0 and options.cf_offset or Vector3.new(1,1,1))
-				part.Orientation = part_to.Orientation -- ^^ Maybe find better way idk
-			else
+			if isnetwokrowner(part) == true then
 				part.CFrame = part_to.CFrame * options.cf_offset
 			end
+			-- Position/Orientation Dont Replicate
 		end)
 
 		if options.apply_vel then
 			hb_con = run_service["Heartbeat"]:Connect(function()
-				if options.stabilize_method == "position" then
-					part.Position = part_to.Position * (options.cf_offset.Position.Magnitude ~= 0 and options.cf_offset or Vector3.new(1,1,1))
-					part.Orientation = part_to.Orientation -- ^^ Maybe find better way idk
-				else
-					part.CFrame = part_to.CFrame * options.cf_offset
-				end
+			if isnetwokrowner(part) == true then
+				part.CFrame = part_to.CFrame * options.cf_offset
+			end
+			-- Position/Orientation Dont Replicate
 
 				local vel, rotvel: Vector3 = net_module.calculate_vel(
 					options.dynamic_vel and hum or nil,
@@ -222,9 +218,9 @@ net_module.physics_tweaks = function(hum: Humanoid?)
 		)
 		
 		sethiddenproperty(workspace,
-			"PhysicsSimulationRate", 
+			"PhysicsSimulationRateReplicator",
 			Enum.PhysicsSimulationRate.Fixed240Hz
-		)
+		) -- PhysicsSimulationRate sometimes errors
 	
 		sethiddenproperty(workspace,
 			"PhysicsSteppingMethod", 
