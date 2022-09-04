@@ -84,7 +84,7 @@ net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, model: Mod
 	return vel,rotvel
 end
 
-local function radless(part: BasePart, hum: Humanoid?, options: table?): RBXScriptConnection
+net_module.radless = function(part: BasePart, hum: Humanoid?, options: table?): RBXScriptConnection
 	options = do_options(options,
 		{
 			st_vel = Vector3.new(0,50,0), --Static Velocity
@@ -93,18 +93,20 @@ local function radless(part: BasePart, hum: Humanoid?, options: table?): RBXScri
 			dynamic_vel = hum and true or false
 		}
 	)
-	
+
 	return run_service["Heartbeat"]:Connect(function()
 		local vel,rotvel: Vector3 = net_module.calculate_vel(
 			options.dynamic_vel and hum or nil,
 			nil,
 			options
 		)
-		
-		part:ApplyImpulse(vel)
-		part.AssemblyLinearVelocity = vel
 
-		part:ApplyAngularImpulse(rotvel)
+		coroutine.wrap(function()
+			part:ApplyImpulse(vel)
+			part:ApplyAngularImpulse(rotvel)
+		end)()
+
+		part.AssemblyLinearVelocity = vel
 		part.RotVelocity = rotvel --RotVelocity is built different
 	end)
 end
@@ -117,6 +119,7 @@ net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid
 			dv_debounce = .05, --Dynamic Velocity debounce
 			dv_multiplier = 50, --Dynamic Velocity apmplifier
 			rv_multiplier = 5,  --Rotational Velocity apmplifier
+			stabilize_method = "cframe", --Can use Position or CFrame
             jum_vel = model and true or false,
 			dynamic_vel = hum and true or false, --If dynamic velocity is enabled
 			calc_rotvel = true, --If rotvel calculation is enabled(otherwise 0,0,0)
@@ -124,14 +127,22 @@ net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid
 		}
 	)
 
-	local rs_con, hb_con: RBXScriptConnection do
+	local rs_con,hb_con: RBXScriptConnection do
 		rs_con = run_service["Heartbeat"]:Connect(function()
-			part.CFrame = part_to.CFrame * options.cf_offset
+			if options.stabilize_method == "position" then
+				part.Position = part_to.Position * options.cf_offset.Position
+			else
+				part.CFrame = part_to.CFrame * options.cf_offset
+			end
 		end)
 
 		if options.apply_vel then
 			hb_con = run_service["Heartbeat"]:Connect(function()
-				part.CFrame = part_to.CFrame * options.cf_offset
+				if options.stabilize_method == "position" then
+					part.Position = part_to.Position * options.cf_offset.Position
+				else
+					part.CFrame = part_to.CFrame * options.cf_offset
+				end
 
 				local vel, rotvel: Vector3 = net_module.calculate_vel(
 					options.dynamic_vel and hum or nil,
