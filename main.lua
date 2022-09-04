@@ -140,7 +140,8 @@ net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid
 		if options.apply_vel then
 			hb_con = run_service["Heartbeat"]:Connect(function()
 				if options.stabilize_method == "position" then
-					part.Position = part_to.Position * options.cf_offset.Position
+					part.Position = part_to.Position * (options.cf_offset.Position.Magnitude ~= 0 and options.cf_offset or Vector3.new(1,1,1))
+					part.Orientation = part_to.Orientation -- ^^ Maybe find better way idk
 				else
 					part.CFrame = part_to.CFrame * options.cf_offset
 				end
