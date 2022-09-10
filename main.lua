@@ -154,10 +154,17 @@ net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid
 				)
 
 				part:ApplyImpulse(vel)
-				part.AssemblyLinearVelocity = vel
-
 				part:ApplyAngularImpulse(rotvel)
+
+				part.AssemblyLinearVelocity = vel
 				part.RotVelocity = rotvel --RotVelocity is built different
+
+				if options.stabilize_method == "position" then
+					part.Position = part_to.Position * (options.cf_offset.Position.Magnitude ~= 0 and options.cf_offset or Vector3.new(1,1,1))
+					part.Orientation = part_to.Orientation -- ^^ Maybe find better way idk
+				else
+					part.CFrame = part_to.CFrame * options.cf_offset
+				end
 			end)
 		end
 	end
