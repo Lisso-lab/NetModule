@@ -37,14 +37,6 @@ net_module.sim_rad = function(plr: Player): RBXScriptConnection
 	end)
 end
 
-net_module.movedir_calc = function(move_dir: Vector3, multiplier: number): Vector3
-	return move_dir * multiplier
-end
-
-net_module.rotvel_calc = function(rot_vel: Vector3, multiplier: number): Vector3
-	return rot_vel * multiplier
-end
-
 net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, model: Model, options: table?): Vector3
 	options = do_options(options,
 		{
@@ -63,24 +55,24 @@ net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, model: Mod
 
 		if not options.dynamic_vel or hum.MoveDirection.Magnitude == 0 then
 			if tick() - debounce_tick < options.dv_debounce then
-				vel = net_module.movedir_calc(hum.MoveDirection, options.dv_multiplier) + options.st_vel / 2
+				vel = (hum.MoveDirection * options.dv_multiplier) + options.st_vel / 2
 			else
 				vel = options.st_vel + (options.jum_vel and Vector3.new(0, model.PrimaryPart.AssemblyLinearVelocity.Y, 0) or Vector3.zero)
 			end
 		else
-			vel = net_module.movedir_calc(hum.MoveDirection, options.dv_multiplier)
+			vel = (hum.MoveDirection * options.dv_multiplier)
             vel += (options.jum_vel and Vector3.new(0, model.PrimaryPart.AssemblyLinearVelocity.Y, 0) or Vector3.zero)
 
 			debounce_tick = tick()
 		end
 
 		if options.calc_rotvel then
-			rotvel = net_module.rotvel_calc(options.calc_rotvel and rotvel or Vector3.zero, options.rv_multiplier)
+			rotvel = rotvel or Vector3.one * options.rv_multiplier
 		else
 			rotvel = Vector3.zero
 		end
 	end
-	
+
 	return vel,rotvel
 end
 
@@ -88,23 +80,23 @@ net_module.radless = function(part: BasePart, hum: Humanoid?, options: table?): 
 	options = do_options(options,
 		{
 			st_vel = Vector3.new(0,50,0), --Static Velocity
+			rv_multiplier = 5,
 			dv_debounce = .05, --Dynamic Velocity debounce
 			dv_multiplier = 50, --Dynamic Velocity multiplier
-			dynamic_vel = hum and true or false
+			dynamic_vel = hum and true or false,
+			apply_rotvel = false
 		}
 	)
 
 	return run_service["Heartbeat"]:Connect(function()
 		local vel,rotvel: Vector3 = net_module.calculate_vel(
 			options.dynamic_vel and hum or nil,
-			nil,
+			options.apply_rotvel and options.rv_multiplier,
 			options
 		)
 
-		coroutine.wrap(function()
-			part:ApplyImpulse(vel)
-			part:ApplyAngularImpulse(rotvel)
-		end)()
+		part:ApplyImpulse(vel)
+		part:ApplyAngularImpulse(rotvel)
 
 		part.AssemblyLinearVelocity = vel
 		part.RotVelocity = rotvel --RotVelocity is built different
@@ -147,7 +139,7 @@ net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid
 				end
 
 				local vel, rotvel: Vector3 = net_module.calculate_vel(
-					options.dynamic_vel and hum or nil,
+					options.dynamic_vel and hum,
 					options.calc_rotvel and part_to.AssemblyAngularVelocity,
                     model,
 					options
