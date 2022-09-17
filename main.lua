@@ -37,7 +37,7 @@ net_module.sim_rad = function(plr: Player): RBXScriptConnection
 	end)
 end
 
-net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, model: Model, options: table?): Vector3
+net_module.calculate_vel = function(hum: Humanoid?, model: Model?, options: table?): Vector3
 	options = do_options(options,
 		{
 			st_vel = Vector3.new(0,50,0), --Stational Velocity
@@ -46,7 +46,7 @@ net_module.calculate_vel = function(hum: Humanoid?, rotvel: Vector3?, model: Mod
 			rv_multiplier = 5,  --Rotational Velocity apmplifier
 			dynamic_vel = false, --If dynamic velocity is enabled
             jum_vel = model and true or false, --Jumping velocity
-			calc_rotvel = rotvel and true or false --If rotvel calculation is enabled(otherwise 0,0,0)
+			calc_rotvel = true --If rotvel calculation is enabled(otherwise 0,0,0)
 		}
 	)
 
@@ -90,8 +90,8 @@ net_module.radless = function(part: BasePart, hum: Humanoid?, options: table?): 
 
 	return run_service["Heartbeat"]:Connect(function()
 		local vel,rotvel: Vector3 = net_module.calculate_vel(
-			options.dynamic_vel and hum or nil,
-			options.apply_rotvel and options.rv_multiplier,
+			options.dynamic_vel and hum,
+			nil,
 			options
 		)
 
