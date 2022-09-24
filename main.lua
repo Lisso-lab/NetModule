@@ -269,3 +269,5 @@ net_module.stabilize = function(part: BasePart, part_to: BasePart, hum: Humanoid
 
     return rs_connection,hb_connection
 end
+
+return net_module
