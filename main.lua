@@ -146,7 +146,7 @@ net_module.calc_vel = function(part: BasePart, part_to: BasePart?, hum: Humanoid
     local vel, rotvel: Vector3 do
         if not hum or hum.MoveDirection.Magnitude == 0 then
             if tick() - debounce[part.Name][1] < options.dv_debounce then
-                vel = debounce[part.Name][2] * 2 + options.st_vel
+                vel = debounce[part.Name][2] * 2 + (options.st_vel / 2)
             else
                 vel = options.st_vel + (model and Vector3.yAxis * model.PrimaryPart.AssemblyLinearVelocity.Y or Vector3.zero)
             end
