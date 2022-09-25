@@ -137,24 +137,44 @@ net_module.calc_vel = function(part: BasePart, part_to: BasePart?, hum: Humanoid
     options = do_options(options, {
         st_vel = Vector3.new(0,50,0), --Stational Velocity
         dv_multiplier = 50, --Dynamic Velocity multiplier
-        dv_debounce = .05, --Dynamic Velocity debounce
+        dv_debounce = .1, --Dynamic Velocity debounce
         rv_multiplier = 5,  --Rotational Velocity multiplier
     })
 
-    if not debounce[part.Name] then debounce[part.Name] = {0} end
-
-    local vel, rotvel: Vector3 do
-        if not hum or hum.MoveDirection.Magnitude == 0 then
-            if tick() - debounce[part.Name][1] < options.dv_debounce then
-                vel = debounce[part.Name][2] * 2 + (options.st_vel / 2)
-            else
-                vel = options.st_vel + (model and Vector3.yAxis * model.PrimaryPart.AssemblyLinearVelocity.Y or Vector3.zero)
+    if not debounce[part.Name] then
+        if part.Name == "Handle" then
+            if not debounce[part.Parent.Name] then
+                debounce[part.Name] = {0,Vector3.one}
             end
         else
-            vel = hum.MoveDirection * options.dv_multiplier + (model and Vector3.yAxis * model.PrimaryPart.AssemblyLinearVelocity.Y or Vector3.zero)
+            debounce[part.Name] = {0,Vector3.one}
+        end
+    end
 
-            debounce[part.Name][1] = tick()
-            debounce[part.Name][2] = hum.MoveDirection
+    local vel, rotvel: Vector3 do
+        local d_info do
+            if debounce[part.Name] then
+                d_info = debounce[part.Name]
+            else
+                d_info = debounce[part.Parent.Name]
+            end
+        end
+
+        if not hum or hum.MoveDirection.Magnitude == 0 then
+            if tick() - d_info[1] < options.dv_debounce then
+                vel = d_info[2] + (model and Vector3.yAxis * (model.PrimaryPart.AssemblyLinearVelocity.Y + 26) or Vector3.one)
+            else
+                vel = options.st_vel + (model and Vector3.yAxis * model.PrimaryPart.AssemblyLinearVelocity.Y or Vector3.one)
+            end
+        else
+            if tick() - d_info[1] < options.dv_debounce and hum.MoveDirection ~= d_info[2] then
+                vel = hum.MoveDirection * options.dv_multiplier + (model and Vector3.yAxis * (model.PrimaryPart.AssemblyLinearVelocity.Y + 26) or Vector3.one)
+            else
+                vel = hum.MoveDirection * options.dv_multiplier + (model and Vector3.yAxis * model.PrimaryPart.AssemblyLinearVelocity.Y or Vector3.one)
+
+                d_info[1] = tick()
+                d_info[2] = hum.MoveDirection
+            end
         end
 
         if part_to then
